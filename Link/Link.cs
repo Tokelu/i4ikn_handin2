@@ -79,5 +79,79 @@ namespace Linklaget
 	    	// TO DO Your own code
 			return 0;
 		}
-	}
+
+
+	    #region Frames
+
+	    
+        // Ved at bruge "A" som delimiter skal vi have lagt vores data ind i frames. og for stadig at kunne forstå A (og B) skal vi have oversat A til BC og B til BD
+
+	    private int Enframe(byte[] buf, int size)
+	    {
+	        var replacedChars = 0;
+	        var framedChars = 0;
+
+            //  se på en char: 
+	        while (replacedChars < size)
+	        {
+                //  Er char'en samme som vores delimiter (A) ?
+	            if (buf[replacedChars] == DELIMITER )
+	            {
+                    //  Skift ud med BC
+	                buffer[framedChars++] = (byte) 'B';
+	                buffer[framedChars++] = (byte) 'C';
+	            }
+	            //  Er char'en B 
+                else if (buf[replacedChars] == (byte) 'B')
+	            {
+	                //  Skift ud med BD
+                    buffer[framedChars++] = (byte) 'B';
+	                buffer[framedChars++] = (byte) 'D';
+                }
+	            else
+	            {
+                    //  ellers indsæt  den char vi er kommet til 
+	                buffer[framedChars++] = buf[replacedChars];
+	            }
+                //  NEXT!
+	            replacedChars++;
+	        }
+            //  Indsæt vores delimiter
+	        buffer[framedChars++] = DELIMITER;
+	        return framedChars;
+	    }
+
+        //  Vi skal også kunne "Deframe" vores data
+
+	    private int Deframe(ref byte[] buf, int size)
+	    {
+	        var framedChars = 0;
+
+	        for (int i = 0; i < size-1; i++)
+	        {
+                //  Er char'en B
+	            if (buffer[i]==(byte) 'B')
+	            {
+                    //  Hvis ja, er næste char D? -> så indsæt B
+	                if (buffer[++i]==(byte)'D')
+	                {
+	                    buf[framedChars++] = (byte) 'B';
+	                }
+                    //  Ellers hvis den næste er C -> så indsæt A
+                    else if (buffer[++i] == (byte) 'C')
+	                {
+	                    buf[framedChars++] = (byte) 'A';
+	                }
+	            }
+                // ellers indsæt den næste Char
+	            buf[framedChars] = buffer[i];
+            }
+
+	        return framedChars;
+	    }
+
+	    #endregion
+
+
+    }
 }
