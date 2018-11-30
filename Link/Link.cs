@@ -28,6 +28,8 @@ namespace Linklaget
         /// </summary>
 
 
+        //  Jeg ved ikke helt hvordan vi skulle bruge APP til at koble mellem vores klient/Server... 
+        //  public Link (int BUFSIZE, string APP)
 
         public Link(int buffSize)
         {
@@ -41,7 +43,6 @@ namespace Linklaget
             //  Vi har delimiters også, giver plads til 2 yderligere bytes. 
             buffer = new byte[(buffSize * 2) + 2];
 
-            // Uncomment the next line to use timeout
             serialPort.ReadTimeout = 500;
 
             serialPort.DiscardInBuffer();

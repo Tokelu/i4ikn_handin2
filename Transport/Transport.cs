@@ -48,6 +48,13 @@ namespace Transportlaget
 		/// </summary>
 		private int recvSize = 0;
 
+
+
+        //  til introduktion af bitfejl - simuleret fejl. 
+	    private int bitErrorIntroduction = 0;
+
+
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Transport"/> class.
 		/// </summary>
@@ -70,7 +77,7 @@ namespace Transportlaget
 		/// </returns>
 		private bool receiveAck()
 		{
-			recvSize = link.receive(ref buffer);
+			recvSize = link.ReceiveData(ref buffer);
 			dataReceived = true;
 
 			if (recvSize == (int)TransSize.ACKSIZE) {
@@ -93,15 +100,26 @@ namespace Transportlaget
 		/// <param name='ackType'>
 		/// Ack type.
 		/// </param>
-		private void sendAck (bool ackType)
+		private void SendAck (bool ackType)
 		{
-			byte[] ackBuf = new byte[(int)TransSize.ACKSIZE];
-			ackBuf [(int)TransCHKSUM.SEQNO] = (byte)
-				(ackType ? (byte)buffer [(int)TransCHKSUM.SEQNO] : (byte)(buffer [(int)TransCHKSUM.SEQNO] + 1) % 2);
-			ackBuf [(int)TransCHKSUM.TYPE] = (byte)(int)TransType.ACK;
-			checksum.calcChecksum (ref ackBuf, (int)TransSize.ACKSIZE);
-			link.send(ackBuf, (int)TransSize.ACKSIZE);
-		}
+		    byte[] ackBuf = new byte[(int)TransSize.ACKSIZE];
+		    ackBuf[(int)TransCHKSUM.SEQNO] = (byte)
+		        (ackType ? buffer[(int)TransCHKSUM.SEQNO] : (byte)(buffer[(int)TransCHKSUM.SEQNO] + 1) % 2);
+		    ackBuf[(int)TransCHKSUM.TYPE] = (byte)(int)TransType.ACK;
+		    checksum.calcChecksum(ref ackBuf, (int)TransSize.ACKSIZE);
+
+		    if (++ bitErrorIntroduction == 2)
+		    {
+		        ackBuf[0]++;
+		        bitErrorIntroduction = 0;
+		    }
+
+		    link.Send(ackBuf, (int)TransSize.ACKSIZE);
+
+
+
+
+        }
 
 		/// <summary>
 		/// Send the specified buffer and size.
@@ -114,7 +132,7 @@ namespace Transportlaget
 		/// </param>
 		public void send(byte[] buf, int size)
 		{
-			// TO DO Your own code
+
 		}
 
 		/// <summary>
