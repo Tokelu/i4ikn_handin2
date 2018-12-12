@@ -63,12 +63,12 @@ namespace Linklaget
         /// Size.
         /// </param>
 
-        public void send(byte[] buf, int size)
+        public void Send(byte[] buf, int size)
         {
             //  Send data til Framing
             var dataCharCount = Enframe(buf, size);
             //  Skub igennem seriel porten.
-            serialPort.Write(buf, 0, dataCharCount);
+            serialPort.Write(buffer, 0, dataCharCount);
         }
 
         /// <summary>
